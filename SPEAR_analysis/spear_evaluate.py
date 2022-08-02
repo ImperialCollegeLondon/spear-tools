@@ -27,8 +27,16 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
     window = x_ref.shape[0] / fs # sec, whole segment (for speechmetrics)
     spmetrics = sm.load('relative',window)
     SM_scores = []
-    SM_scores.append(spmetrics(x_proc[:,0], x_ref[:,0], rate=fs)) # Left
-    SM_scores.append(spmetrics(x_proc[:,1], x_ref[:,1], rate=fs)) # Right
+    try:
+        SM_scores.append(spmetrics(x_proc[:,0], x_ref[:,0], rate=fs)) # Left
+        SM_scores.append(spmetrics(x_proc[:,1], x_ref[:,1], rate=fs)) # Right
+        SM_error = False
+    except Exception as err:
+        print('Error in spmetrics')
+        print(type(err))
+        print(err)
+        SM_error = True
+        
 
     # Loop through columns/metrics (some are already calculated/some to be calculated)
     scores=[]
@@ -45,16 +53,22 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
                 elif mm=='ESTOI':
                     score = stoi(x_ref[:,cc], x_proc[:,cc], fs, extended=True)
                 elif mm=='SDR':
+                    if SM_error: raise ValueError
                     score = float(SM_scores[cc]['sdr'][0])
                 elif mm=='ISR':
+                    if SM_error: raise ValueError
                     score = float(SM_scores[cc]['isr'][0])
                 elif mm=='SAR':
+                    if SM_error: raise ValueError
                     score = float(SM_scores[cc]['sar'][0])
                 elif mm=='SI-SDR':
+                    if SM_error: raise ValueError
                     score = float(SM_scores[cc]['sisdr'][0])
                 elif mm=='PESQ':
+                    if SM_error: raise ValueError
                     score = float(SM_scores[cc]['pesq'][0]) 
                 elif mm=='PESQ-NB':
+                    if SM_error: raise ValueError
                     score = float(SM_scores[cc]['nb_pesq'][0])  
                 elif mm=='SegSNR':
                     score = pysepm.SNRseg(x_ref[:,cc], x_proc[:,cc], fs)
@@ -150,6 +164,8 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
                 ended_early = True
                 break
         
+            # debugging
+            print(f'{proc_file_name}: sample_start: {sample_start}, sample_stop: {sample_stop}')
             
             # read in the audio
             x_proc, fs_proc = sf.read(proc_file, start=sample_start, stop=sample_stop+1)
