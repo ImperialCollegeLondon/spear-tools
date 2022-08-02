@@ -152,6 +152,7 @@ class SPEAR_Data:
         # DESCRIPTION: find and set the ID of participants present in a file
         path = os.path.join(obj.root_path,obj.dataset_folder,obj.doa_folder,obj.session_folder) 
         files = glob.glob(os.path.join(path,f'doa_{obj.file}_ID*.csv'))
+        files.sort()
         obj.IDs = []
         for f in files:
             obj.IDs.append(int(f[-5]))
@@ -248,16 +249,21 @@ class SPEAR_Data:
         for d in datasets:
             path = os.path.join(obj.root_path,obj.dataset_prefix+str(d),obj.array_folder)
             if not sessions:
-                sessions = [int(x.split('_')[-1]) for x in glob.glob(os.path.join(path,'Session_*'))]
+                sess_paths = glob.glob(os.path.join(path,'Session_*'))
+                sess_paths.sort()
+                sessions = [int(x.split('_')[-1]) for x in sess_paths]
             for s in sessions:
                 if not files:
                     files = []
-                    for file in glob.glob(os.path.join(path,f'Session_{s}','*.wav')):
+                    files_paths = glob.glob(os.path.join(path,f'Session_{s}','*.wav'))
+                    files_paths.sort()
+                    for file in files_paths:
                         files.append('M'+file.split(os.sep)[-1].split('_M')[-1].split('.wav')[0])
                 for f in files:
                     c['dataset'].append(d)
                     c['session'].append(s)
                     c['file'].append(f)
+                files = []
         cases = pd.DataFrame(c)
         return cases
                         
