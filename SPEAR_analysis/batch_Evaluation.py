@@ -128,7 +128,7 @@ def BatchEvaluation(root_path, save_path, proc_path, list_cases=[], method_name=
         # Loop through chunks
         metric_vals=[]
         metric_vals_passthrough=[]
-        for n in range(nSeg):
+        for n in range(nSeg): #616
             print('Segment: ' + str(n+1) + '/' + str(nSeg))
             seg = segments.iloc[n]
             session = seg['session']

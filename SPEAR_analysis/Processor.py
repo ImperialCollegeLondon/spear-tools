@@ -3,7 +3,8 @@
 
 # Version history: date/author/updates:
 # 2022 May - Sina Hafezi - first version inclusing baseline beamformer (Isotropic-MVDR/Superdirective) & all required utility functions
-# 2022 Jul 25 - Sina Hafezi - moved pos/ht interpolation from dataset class to here
+# 2022 Jul - Sina Hafezi - moved pos/ht interpolation from dataset class to here
+# 2022 Aug - Sina Hafezi - faster stft processing (one less loop)
 
 import numpy as np
 from scipy.fft import rfft, rfftfreq
@@ -41,7 +42,7 @@ class SPEAR_Processor:
     noverlap = [] # step size in sample
     
     target_pos_interp = []  # (SciPy 1D-interpolant) cartesian position interpolant function returning array of (x y z) as ndarray for requested time(s)
-    target_dir_ind = [] # hold index of target doa over time
+    target_dir_ind = [] # (list) hold index of target doa over time
     
     R_iso = [] # diffuse covariance matrix (used in superdirective beamformer - baseline method)
     w_conj = []  # pre-calculated beamforming conjugate weights for all directions [nChan x nFreq x nDir x nOut]
@@ -278,6 +279,7 @@ class SPEAR_Processor:
         nOut = len(obj.out_chan)
         w = np.zeros((nChan,nFreq,nFrame,nOut),dtype=np.complex64) # beamforning STFT conj weights [nChan x nFreq x nFrame x nOut]
         Y = np.zeros((nOut,nFreq,nFrame),dtype=np.complex64) # enhanced signal in STFT domain [nOut x nFreq x nFrame]
+        obj.target_dir_ind = [0]*nFrame # initize the array length to store index of target direction per frame
         #print('Enhancement Processing')
         print_cycle=100 # number of interations to wait before updating progress print (keep it high as the loop is fast)
         # STFT beamforming
@@ -286,12 +288,11 @@ class SPEAR_Processor:
                 print('\r','Processing %%%2.2f ' % (100*framei/nFrame),end='\r')
             dist = obj.get_angle_between(target_doas[framei,:],obj.dirs)
             di = np.where(dist == dist.min())[0][0] # nearest neighbour to target doa
-            obj.target_dir_ind.append(di)
-            for freqi in range(nFreq):
-                for oi in range(nOut):
-                    # read conj weights from pre-stored directory obj.w_conj = [nChan x nFreq x nDir x nOut]
-                    w[:,freqi,framei,oi] = obj.w_conj[:,freqi,di,oi]
-                    Y[oi,freqi,framei] = np.sum(X[:,freqi,framei] * w[:,freqi,framei,oi])
+            obj.target_dir_ind[framei]=di
+            for oi in range(nOut):
+                # read conj weights from pre-stored directory obj.w_conj = [nChan x nFreq x nDir x nOut]
+                w[:,:,framei,oi] = obj.w_conj[:,:,di,oi]
+                Y[oi,:,framei] = np.sum(X[:,:,framei] * w[:,:,framei,oi],axis=0)
         obj.w_stft = w            
         print('\r','Processing %%%2.2f - Done!' % (100),end='\n')
         return Y, w

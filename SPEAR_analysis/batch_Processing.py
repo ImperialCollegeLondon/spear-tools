@@ -14,6 +14,7 @@ import soundfile as sf
 from SPEAR import *
 from Processor import *
 
+
 def BatchProcessing(root_path, save_path, list_cases=[], method_name='baseline', passthrough=False):
 
     fs = int(48e3) # output freq
