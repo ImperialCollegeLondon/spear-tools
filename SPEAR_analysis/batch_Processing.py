@@ -4,6 +4,7 @@
 # 2022 Jun - Sina Hafezi - initial script
 # 2022 Jul - Pierre Guiraud - updated into a function to be used in the batch_master script
 # 2022 Jul - Sina Hafezi - making the paths concatenation robust to operating sys using os.path
+# 2022 Aug - Pierre Guiraud - Sanity check if processing already exists
 
 import os
 from pathlib import Path

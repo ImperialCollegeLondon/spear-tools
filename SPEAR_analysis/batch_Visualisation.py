@@ -27,11 +27,14 @@ def BatchVisualisation(save_path, proc_file, pass_file, ToSave=0, passthrough_on
 
     # Read in chunks info
     seg_pass = pd.read_csv(pass_file)
+    seg_pass = seg_pass.drop(['global_index', 'file_name', 'chunk_index'], axis=1)
     if not passthrough_only:
         seg_proc = pd.read_csv(proc_file)
+        seg_proc = seg_proc.drop(['global_index', 'file_name', 'chunk_index'], axis=1)
     else:
         seg_proc = np.zeros(np.shape(seg_pass))
     nSeg=len(seg_pass)
+
 
     gg=.2 # separation between L/R boxplots
     sides = ['L','R'] 
