@@ -138,6 +138,7 @@ for dataset_n = 1:4
     
                     segments(j).dataset=dataset_id;
                     segments(j).session=session;
+                    segments(j).minute=minute;
                     segments(j).file_index=fi;
                     segments(j).file_name=fname;
                     segments(j).chunk_index=chk_idx;
