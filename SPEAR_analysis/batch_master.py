@@ -25,16 +25,21 @@ from batch_Visualisation import BatchVisualisation
 
 
 ### Parameters
-choose_set  = 'Train' # Choose to work in Train/Dev/Eval set
-list_cases  = ['D1',1,'M00'] # Choose subset to investigate. Use [] if all the sets are of interest.
+choose_set  = 'Dev' # Choose to work in Train/Dev/Eval set
+list_cases  = ['D1',10] # Choose subset to investigate. Use [] if all the sets are of interest.
 ToSave      = 1 # 0: dont/ 1: do save the plots
 method_name = 'baseline' # Name of the currently tested method. Used for the output csv file name and processed audio folder
 passthrough_only = False # Compute only the passthrough metrics and not the processed audio (baseline by default).
 
 ### Choose which section to run
 run_processing    = True # Output processed and passthrough audio
-run_evaluation    = False # Output csv file with all computed metrics on all chunks
-run_visualisation = False # Output plots for all metrics
+run_evaluation    = True # Output csv file with all computed metrics on all chunks
+run_visualisation = True # Output plots for all metrics
+
+path_spear = '/Volumes/SPEAR_SSD3/SPEAR_v2' # select the directory of the SPEAR challenge dataset
+proc_path  = '/Volumes/SPEAR_SSD2/SPEAR_v2_ProcessedAudio' # where outputs (enhanced/processed audio files, metrics and plots) will be saved
+
+
 
 ########################
 
@@ -46,10 +51,7 @@ if len(list_cases)>1:
         choose_set = 'Eval'
     else:
         choose_set = 'Dev'
-# path_SSD = str(Path(os.path.realpath(__file__)).parents[1]) # select the directory one step above the current one
-path_SSD = '/Volumes/HD FRL/data' # select the directory one step above the current one
-root_path = str(PurePath(path_SSD, 'SPEAR_S1S2', 'Main', choose_set)) # root path for dataset
-proc_path = str(PurePath(path_SSD, 'SPEAR_ProcessedAudio')) # where outputs (enhanced/processed audio files, metrics and plots) will be saved
+root_path = str(PurePath(path_spear, 'Main', choose_set)) # root path for dataset
 
 
 ########################
@@ -67,11 +69,14 @@ if run_processing:
 ### Part 2: Evaluation
 method_name_pt = 'passthrough'
 case_str       = ''
-for case in list_cases:
-    if type(case)==str:
-        case_str    += case
-    else:
-        case_str    += 'S'+str(case)
+if len(list_cases)>1:
+    for case in list_cases:
+        if type(case)==str:
+            case_str    += case
+        else:
+            case_str    += 'S'+str(case)
+else:
+    case_str += choose_set
 
 metricNplot_path = os.path.join(proc_path,case_str) # path where plots will be saved
 
