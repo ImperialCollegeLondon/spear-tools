@@ -18,7 +18,7 @@ segments=struct();
 tic;
 for dataset_n = 1:4
     dataset = sprintf('Dataset_%d/', dataset_n);
-    inpath.dataset='/Volumes/SPEAR_SSD3/SPEAR_v1'; %'/Volumes/HD FRL/data/EasyComDataset/Main';
+    inpath.dataset='/Volumes/SPEAR_SSD3/SPEAR_v2'; %'/Volumes/HD FRL/data/EasyComDataset/Main';
     inpath.extra = 'Extra';
     inpath.main = 'Main';
     inpath.set = 'Train';
@@ -31,7 +31,7 @@ for dataset_n = 1:4
     outpath.path=pwd; % save path for output csv
     outpath.filename=sprintf('segments_%s', inpath.set);  % name for output csv
     dataset_id=sprintf('D%d', dataset_n); % dataset ID (value used in the associated column)
-    dataset_type='rec'; % 'sim' or 'rec' (value used in the associated column)
+    if dataset_n==1, dataset_type='rec'; else, dataset_type='sim'; end % 'sim' or 'rec' (value used in the associated column)
     RT60=.645; % sec  (value used in the associated column)
     ATF_type='unknown'; % in case ATFs other than EasyCom were used (value used in the associated column)
     lev_ambient=nan; % in case level of oracle ambient is known (value used in the associated column)
@@ -81,7 +81,7 @@ for dataset_n = 1:4
             
             ht = SPEAR_read_ht_data(ht_file);
             
-            [array fs]=audioread(fullfile(inpath.dataset,inpath.main,inpath.set,inpath.array,sessionfolder,['array_', str_file, '.wav']));
+            [array, ~]=audioread(fullfile(inpath.dataset,inpath.main,inpath.set,inpath.array,sessionfolder,['array_', str_file, '.wav']));
             
             % going through each source as target
             srcs=dir(fullfile(inpath.dataset,inpath.extra,inpath.set,inpath.ref,sessionfolder,minute,sprintf('ref_%s_*.wav',str_file))); %['ref_', str_file, '*.wav']
@@ -89,9 +89,9 @@ for dataset_n = 1:4
             chk_idx = 1;
             for si=1:nSrc
                 sname=srcs(si).name;
-                src_ID= str2num(sname(end-4)); %str2num(sname(find(sname=='_',1,'last')+1:find(sname=='.',1,'last')-1));
+                src_ID= str2double(sname(end-4)); %str2num(sname(find(sname=='_',1,'last')+1:find(sname=='.',1,'last')-1));
                 
-                [headset fs]=audioread(fullfile(srcs(si).folder,srcs(si).name));
+                [headset, ~]=audioread(fullfile(srcs(si).folder,srcs(si).name));
                 % zero padding if headset signal is slightly shorter than array signal
                 if size(headset,1)~=size(array,1)
                     headsettemp=headset;
@@ -140,7 +140,7 @@ for dataset_n = 1:4
                     segments(j).session=session;
                     segments(j).minute=minute;
                     segments(j).file_index=fi;
-                    segments(j).file_name=fname;
+                    segments(j).file_name=str_file;
                     segments(j).chunk_index=chk_idx;
                     chk_idx = chk_idx+1;
                     
@@ -201,6 +201,8 @@ save(fullfile(outpath.path,sprintf('%s.mat',outpath.filename)),'segments','-v7.3
 
 
 %% csv write
+
+fprintf('Creating the csv file \n')
 ffs=fields(segments);
 c=ffs(:)';
 for j=1:length(segments)
@@ -211,3 +213,4 @@ for j=1:length(segments)
     c=[c;ct];
 end
 writecell(c,fullfile(outpath.path,sprintf('%s.csv',outpath.filename)));
+fprintf('All done \n')
