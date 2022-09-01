@@ -1,0 +1,4 @@
+name: spear-metrics
+channels:
+  - defaults
+prefix: /opt/anaconda3/envs/spear-metrics
