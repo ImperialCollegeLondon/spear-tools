@@ -1,4 +1,18 @@
-name: spear-metrics
 channels:
   - defaults
-prefix: /opt/anaconda3/envs/spear-metrics
+dependencies:
+   - python=3.8
+   - numpy
+   - pandas
+   - pip
+   - scipy
+   - pip:
+      - h5py
+      - librosa
+      - matplotlib
+      - pyclarity
+      - pystoi
+      - https://github.com/schmiph2/pysepm/archive/master.zip
+      - soundfile
+      - git+https://github.com/PGuiraud/speechmetrics#egg=speechmetrics[cpu]
+

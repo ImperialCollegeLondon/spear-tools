@@ -26,7 +26,7 @@ from batch_Visualisation import BatchVisualisation
 
 ### Parameters
 choose_set  = 'Dev' # Choose to work in Train/Dev/Eval set
-list_cases  = ['D1',10] # Choose subset to investigate. Use [] if all the sets are of interest.
+list_cases  = [] # Choose subset to investigate. Use [] if all the sets are of interest.
 ToSave      = 1 # 0: dont/ 1: do save the plots
 method_name = 'baseline' # Name of the currently tested method. Used for the output csv file name and processed audio folder
 passthrough_only = False # Compute only the passthrough metrics and not the processed audio (baseline by default).
@@ -36,8 +36,10 @@ run_processing    = True # Output processed and passthrough audio
 run_evaluation    = True # Output csv file with all computed metrics on all chunks
 run_visualisation = True # Output plots for all metrics
 
-path_spear = '/Volumes/SPEAR_SSD3/SPEAR_v2' # select the directory of the SPEAR challenge dataset
-proc_path  = '/Volumes/SPEAR_SSD2/SPEAR_v2_ProcessedAudio' # where outputs (enhanced/processed audio files, metrics and plots) will be saved
+# path_spear = '/Volumes/SPEAR_SSD3/SPEAR_v2' # select the directory of the SPEAR challenge dataset
+# proc_path  = '/Volumes/SPEAR_SSD2/SPEAR_v2_ProcessedAudio' # where outputs (enhanced/processed audio files, metrics and plots) will be saved
+path_spear = '/media/spear/SPEAR_SSD1/SPEAR_0901_main/SPEAR_v2' # select the directory of the SPEAR challenge dataset
+proc_path  = '/media/spear/SPEAR_SSD1/SPEAR_processedAudio' # where outputs (enhanced/processed audio files, metrics and plots) will be saved
 
 
 
@@ -59,11 +61,11 @@ root_path = str(PurePath(path_spear, 'Main', choose_set)) # root path for datase
 
 ### Part 1: Processing
 if run_processing:
+    print('Running passtrough files')
+    BatchProcessing(root_path, proc_path, list_cases=list_cases, method_name=method_name, passthrough=True)
     if not passthrough_only:
         print('Running processed files')
         BatchProcessing(root_path, proc_path, list_cases=list_cases, method_name=method_name, passthrough=False)
-    print('Running passtrough files')
-    BatchProcessing(root_path, proc_path, list_cases=list_cases, method_name=method_name, passthrough=True)
 
 
 ### Part 2: Evaluation
