@@ -132,6 +132,9 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
     cols = ['%s (%s)' % (x,y) for x in metrics for y in side_str] # creating 2x (Left & Right) mono-based metric
     if isMBSTOI: cols.insert(0,'MBSTOI') # stereo-based metric
 
+
+    cols_csv = ['global_index', 'file_name', 'chunk_index'] + cols
+
     # Loop through chunks
     metric_vals=[]
     nSeg=len(segments)
@@ -139,13 +142,16 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
     for n in range(nSeg):
         print('Segment: ' + str(n+1) + '/' + str(nSeg))
         seg = segments.iloc[n]
-        dataset = seg['dataset'] # integer
+        dataset = int(seg['dataset'][1]) # integer
         session = seg['session'] # integer
-        file_name = seg['file_name'] # original EasyCom name e.g. 01-00-288
-        minute_name = file_name[0:2] # two digit number as string
+        file_name = seg['file_name'] # was original EasyCom name e.g. 01-00-288, now vad_
+        minute_name = file_name[-2:] # two digit number as string
         target_ID = seg['target_ID'] # integer
         sample_start = seg['sample_start']-1
         sample_stop = seg['sample_stop']-1
+        
+        # get chunk info
+        chunk_info = [seg['global_index'], file_name, seg['chunk_index']]
     
         # filenames are subtely different!
         proc_file_name = 'D%d_S%d_M%s_ID%d.wav' % (dataset,session,minute_name,target_ID)
@@ -153,6 +159,7 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
         
         # processed signal
         proc_file = Path(proc_dir, proc_file_name)
+        print(proc_file)
         
         # allow for processing only a subset of files
         if proc_file.is_file():
@@ -167,6 +174,8 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
             # debugging
             print(f'{proc_file_name}: sample_start: {sample_start}, sample_stop: {sample_stop}')
             
+            
+            
             # read in the audio
             x_proc, fs_proc = sf.read(proc_file, start=sample_start, stop=sample_stop+1)
             if len(x_proc.shape)<2: x_proc = np.tile(x_proc, (2,1)).transpose() # mono to stereo conversion if needed
@@ -176,10 +185,10 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
  
             # actually compute the metrics on this chunk
             scores = compute_metrics(x_proc, x_ref, fs_ref, cols)
-            metric_vals.append(scores)
+            metric_vals.append(chunk_info + scores)
     
             
-    metric_vals = pd.DataFrame(metric_vals, columns=cols)
+    metric_vals = pd.DataFrame(metric_vals, columns=cols_csv)
     metric_vals.to_csv(save_path, index=False)
     
     if ended_early:
