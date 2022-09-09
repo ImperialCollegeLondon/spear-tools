@@ -104,7 +104,7 @@ def BatchEvaluation(root_path, save_path, proc_path, list_cases=[], method_name=
         datasets = range(1,5)
 
     for dataset in datasets:
-        # Get the passtrough results of the entire target dataset (if it exists) and get them through the same selection of cases
+        # Get the passtrough results of the entire target set (if it exists) and get them through the same selection of cases
         metrics_ref = f'metrics_passthrough_D{dataset}.csv'
         passthrough_extract = False
         if os.path.exists(metrics_ref):

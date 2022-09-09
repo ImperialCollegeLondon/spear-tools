@@ -32,8 +32,8 @@ git clone https://github.com/ImperialCollegeLondon/spear-tools
 cd spear-tools
 
 # Second create & activate environment with conda
-conda env create --file environment.yaml
-conda activate spear-tools-env
+conda env create -n your-env-name -f env-spear-metrics.yml
+conda activate your-env-name
 ```
 
 ## How to Use
