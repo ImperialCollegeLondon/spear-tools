@@ -23,24 +23,33 @@ import sys
 
 def compute_metrics(x_proc, x_ref, fs_ref, cols):
     fs = fs_ref 
-    # Speech Metric setup
-    window = x_ref.shape[0] / fs # sec, whole segment (for speechmetrics)
-    spmetrics = sm.load('relative',window)
-    SM_scores = []
-    try:
-        SM_scores.append(spmetrics(x_proc[:,0], x_ref[:,0], rate=fs)) # Left
-        SM_scores.append(spmetrics(x_proc[:,1], x_ref[:,1], rate=fs)) # Right
-        SM_error = False
-    except Exception as err:
-        print('Error in spmetrics')
-        print(type(err))
-        print(err)
-        SM_error = True
+    
+    
+    spmetrics_names = ['SDR','ISR','SAR','SI-SDR','PESQ','PESQ-NB']
+    if any(metric_name.split(' (')[0] in spmetrics_names for metric_name in cols):
+        # TODO: choose specific metrics computed rather than always doing them all
+        
+        # Speech Metric setup
+        window = x_ref.shape[0] / fs # sec, whole segment (for speechmetrics)
+        spmetrics = sm.load('relative',window)
+        SM_scores = []
+        try:
+            SM_scores.append(spmetrics(x_proc[:,0], x_ref[:,0], rate=fs)) # Left
+            print('compute_metrics: Left done')        
+            SM_scores.append(spmetrics(x_proc[:,1], x_ref[:,1], rate=fs)) # Right
+            print('compute_metrics: Right done')                
+            SM_error = False
+        except Exception as err:
+            print('Error in spmetrics')
+            print(type(err))
+            print(err)
+            SM_error = True
         
 
     # Loop through columns/metrics (some are already calculated/some to be calculated)
     scores=[]
     for m in cols:
+        print(f'{m}')
         try:
             if m=='MBSTOI': # stereo-based metric (get it once)
                 score = mbstoi.mbstoi(x_ref[:,0], x_ref[:,1], x_proc[:,0], x_proc[:,1], fs)
@@ -76,7 +85,10 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
                     score = pysepm.fwSNRseg(x_ref[:,cc], x_proc[:,cc], fs)   
                 elif mm=='HASPI':
                     score, _ = haspi.haspi_v2(x_ref[:,cc], fs, x_proc[:,cc], fs, [0,0,0,0,0,0])
+                else:
+                    raise print(f'Unknown metric: {mm}')
         except:
+            print(f'Error while obtaining {mm} metric - assigning NaN')
             score = np.nan
 
         scores.append(score)       
@@ -116,13 +128,17 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
     segments = pd.read_csv(segments_file)
 
     # choice of metrics to run
-    default_metrics = ['MBSTOI','STOI','ESTOI',
-                      'PESQ','PESQ-NB',
-                      'SegSNR','fwSegSNR',
-                      'SI-SDR','SDR','ISR','SAR','HASPI']
+    available_metrics = ['MBSTOI','STOI','ESTOI',
+                         'PESQ','PESQ-NB',
+                         'SegSNR','fwSegSNR',
+                         'SI-SDR','SDR','ISR','SAR','HASPI']
 
     if metrics is None:
-        metrics = default_metrics
+        metrics = available_metrics
+    else:
+        if any(item not in available_metrics for item in metrics):
+            print(f'Metric must be one of {available_metrics}')
+            sys.exit()
 
     # Setting up columns for metric matrix
     isMBSTOI = 'MBSTOI' in metrics
@@ -211,7 +227,7 @@ if __name__ == '__main__':
                         help="csv file where results should be stored")
     parser.add_argument("-m","--metrics",
                         help="list a subset of metrics to compute (default is to compute them all)",
-                        default=None)                   
+                        default=None, nargs='+')                   
     args = parser.parse_args()
     print(args)
         
