@@ -86,9 +86,10 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
                 elif mm=='HASPI':
                     score, _ = haspi.haspi_v2(x_ref[:,cc], fs, x_proc[:,cc], fs, [0,0,0,0,0,0])
                 else:
-                    raise print(f'Unknown metric: {mm}')
+                    print(f'Unknown metric: {mm}')
+                    raise ValueError(f'Unknown metric: {mm}')
         except:
-            print(f'Error while obtaining {mm} metric - assigning NaN')
+            print(f'Error while obtaining {m} metric - assigning NaN')
             score = np.nan
 
         scores.append(score)       
@@ -154,14 +155,17 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
     # Loop through chunks
     metric_vals=[]
     nSeg=len(segments)
+    header_was_written = False
     ended_early = False
     for n in range(nSeg):
         print('Segment: ' + str(n+1) + '/' + str(nSeg))
         seg = segments.iloc[n]
-        dataset = int(seg['dataset'][1]) # integer
+        dataset = int(seg['dataset'][1]) #intseg['dataset'][1]) # integer
+        # dataset = seg['dataset'] #intseg['dataset'][1]) # integer
         session = seg['session'] # integer
-        file_name = seg['file_name'] # was original EasyCom name e.g. 01-00-288, now vad_
-        minute_name = file_name[-2:] # two digit number as string
+        minute = seg['minute'] # integer
+        file_name = seg['file_name'] # was original EasyCom name e.g. 01-00-288, now vad_, no nothing
+        # minute_name = file_name[-2:] # two digit number as string
         target_ID = seg['target_ID'] # integer
         sample_start = seg['sample_start']-1
         sample_stop = seg['sample_stop']-1
@@ -170,18 +174,22 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
         chunk_info = [seg['global_index'], file_name, seg['chunk_index']]
     
         # filenames are subtely different!
-        proc_file_name = 'D%d_S%d_M%s_ID%d.wav' % (dataset,session,minute_name,target_ID)
-        ref_file_name = 'ref_D%d_S%d_M%s_ID%d.wav' % (dataset,session,minute_name,target_ID)
+        proc_file_name = 'D%d_S%d_M%02d_ID%d.wav' % (dataset,session,minute,target_ID)
+        ref_file_name = 'ref_D%d_S%d_M%02d_ID%d.wav' % (dataset,session,minute,target_ID)
         
         # processed signal
         proc_file = Path(proc_dir, proc_file_name)
         print(proc_file)
         
         # allow for processing only a subset of files
-        if proc_file.is_file():
+        if not proc_file.is_file():
+            # missing file skipped
+            print('File not found. Skipping...')
+        else:
+            
             # reference signal
             ref_file = Path(ref_root, f'Dataset_{dataset}', 'Reference_Audio',
-                            f'Session_{session}', f'{minute_name}', ref_file_name)
+                            f'Session_{session}', f'{minute:02d}', ref_file_name)
             if not ref_file.is_file():
                 print(f'Expected reference file at {ref_path} is missing. Attempt to save before aborting...')
                 ended_early = True
@@ -201,11 +209,18 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
  
             # actually compute the metrics on this chunk
             scores = compute_metrics(x_proc, x_ref, fs_ref, cols)
-            metric_vals.append(chunk_info + scores)
-    
+            # metric_vals.append(chunk_info + scores)
+            # metric_vals = pd.DataFrame(metric_vals, columns=cols_csv)            
+            metric_vals_df = pd.DataFrame([chunk_info + scores], columns=cols_csv)
             
-    metric_vals = pd.DataFrame(metric_vals, columns=cols_csv)
-    metric_vals.to_csv(save_path, index=False)
+            if not header_was_written:
+                metric_vals_df.to_csv(save_path, index=False)
+                header_was_written = True
+            else: 
+                metric_vals_df.to_csv(save_path,
+                 index=False,
+                 header=False,
+                 mode='a')
     
     if ended_early:
         sys.exit()
