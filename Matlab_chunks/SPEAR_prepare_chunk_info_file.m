@@ -18,10 +18,10 @@ segments=struct();
 tic;
 for dataset_n = 1:4
     dataset = sprintf('Dataset_%d/', dataset_n);
-    inpath.dataset='/Volumes/SPEAR_SSD3/SPEAR_v2'; %'/Volumes/HD FRL/data/EasyComDataset/Main';
+    inpath.dataset='/media/spear/SPEAR_SSD1/SPEAR_v3/SPEAR'; %'/Volumes/HD FRL/data/EasyComDataset/Main';
     inpath.extra = 'Extra';
     inpath.main = 'Main';
-    inpath.set = 'Train';
+    inpath.set = 'Dev';
     inpath.ref= [dataset, 'Reference_Audio']; %'Close_Microphone_Audio_Corrected';
     inpath.array=[dataset, 'Microphone_Array_Audio'];%'Glasses_Microphone_Array_Audio';
     inpath.vad=[dataset, 'VAD'];%'Speech_Transcriptions';
@@ -66,7 +66,7 @@ for dataset_n = 1:4
     for session=    nSession_min:nSession_max
         sessionfolder=sprintf('Session_%d',session);
     
-        files=dir(fullfile(inpath.dataset,inpath.extra,inpath.set,inpath.vad,sessionfolder,'*.csv'));
+        files=dir(fullfile(inpath.dataset,inpath.extra,inpath.set,inpath.vad,sessionfolder,'*.csv'))
         nFile=length(files);
         for fi=1:nFile
             fprintf('** %s set - Dataset %d/4 - Session: %d/%d - File: %d/%d\n',inpath.set,dataset_n,session,nSession_max,fi,nFile);
