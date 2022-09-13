@@ -6,6 +6,61 @@
 
 This repository countains the code to compute the baseline and run the metrics used in the [SPEAR challenge](https://imperialcollegelondon.github.io/spear-challenge/).
 
+
+## Analysis tools
+
+<p align="center">
+  <img src="assets/Scripts_blockDiagram.png" alt="diagram" width="500"/>
+</p>
+
+
+The provided framework consist of three python scripts (more details are found in the powerpoint presentation in _assets_):
+- **spear_enhance.py** computes the baseline enhancement (MVDR beamformer) and output processed audio files.
+- **spear_evaluate.py** computes the metrics on the processed audio files and output a csv file with all metrics for all chunks.
+- **spear_visualise.py** plot the results of the computed metrics csv file and save them.
+
+The resulting metrics csv files for _passthrough_ and _baseline_ enhancements are already generated and provided in _metrics_. To compute those files yourself, a bash script is provided. Instructions are found below.
+
+
+## Installation
+
+```bash
+# First clone the repo
+git clone https://github.com/ImperialCollegeLondon/spear-tools
+cd spear-tools
+
+# Second create & activate environment with conda
+conda env create -n <your-env-name> -f env-spear-metrics.yml
+conda activate <your-env-name>
+```
+
+## How to Use
+
+The main script to use is __spear_master.sh__. 
+The following parameters should be modified
+
+```bash
+# Setup soft links to make paths easier
+ln -sf <outputs-folder-full-path> my_results  # Output path for the processed audio, metrics csv and plots
+ln -sf <dataset-folder-full-path> spear_data  # Root folder of the SPEAR datasets containing the folders Main and Extra
+
+# Define variables
+SET='Dev'           # 'Train', 'Dev' or 'Eval'.
+DATASET=2           # 1 to 4.
+SESSION=''          # 1 to 9 for Train, 10 to 12 for Dev, 13 to 15 for Eval. Select '' for all session of current Dev.
+MINUTE=''           # 00 to 30 (depends on the current session). '' for all minutes of current session.
+METRICS=''          # Choose to compute a subset of metrics (ex:'SDR ISR'). By default '' to run all.
+METHOD='baseline'   # Name of desired processing. Either 'passthrough' or 'baseline' (default).
+```
+
+The rest of the script computes the enhancement, metrics evaluation and plotting for both _passthrough_ and the desired METHOD. 
+
+```bash
+python spear_enhance.py <input_root> <output_root> -m <method-name> -l <list-cases>
+python spear_evaluate.py <input_root> <proc_dir> <segments_file> <save_path> -l <list_cases> -m <metrics>
+python spear_visualise.py <output_root> <metrics-pass> <metrics-proc> -m <method-name>
+```
+
 ## List of metrics
 
 Category | Metric | Metric Abbreviation | Reference | Python Package
@@ -23,78 +78,6 @@ SI       | Hearing Aid Speech Perception Index       | HASPI               | Kat
 SQ       | Perceptual Evaluation of Speech Quality   | PESQ                | Rix et al 2001 [^12]           | [Speech Metric](https://github.com/aliutkus/speechmetrics)
 SQ       | PESQ Narrow Band                          | PESQ-NB             | Rix et al 2001 [^12]           | [Speech Metric](https://github.com/aliutkus/speechmetrics)
 
-
-## Installation
-
-```bash
-# First clone the repo
-git clone https://github.com/ImperialCollegeLondon/spear-tools
-cd spear-tools
-
-# Second create & activate environment with conda
-conda env create -n your-env-name -f env-spear-metrics.yml
-conda activate your-env-name
-```
-
-## How to Use
-
-The main script to use is __batch_master.py__. 
-The path of spear-tools and SPEAR data are assumed to be in the same directory. If not modify the parameter __path_SSD__.
-The following parameters can be modified
-
-```python
-### Parameters
-choose_set  = 'Train' # Choose to work in Train/Dev/Eval set
-list_cases  = ['D2',1, 'M00'] # Choose subset to investigate. Use [] if all the set is of interest.
-ToSave      = 1 # 0: dont/ 1: do save the plots
-method_name = 'baseline' # Name of the currently tested method. Used for the output csv file name and processed audio folder
-passthrough_only = False # Compute only the passthrough metrics and not the processed audio (baseline by default).
-
-### Choose which section to run
-run_processing    = True # Output processed and passthrough audio
-run_evaluation    = False # Output csv file with all computed metrics on all chunks
-run_visualisation = False # Output plots for all metrics
-```
-
-<!-- ## Repo Structure
-
-The structure of the repo is as follow  
-
-┬── **`Python`** (*directory*): Contains Python scripts to run the metrics.  
-│   ├── **`Metrics`** (*directory*): Contains script for all metrics.  
-│   │   └── **`###`** (*directories*): Directory with scripts to compute metric ###.  
-│   ├── `SPEAR_metrics_main.py` (*file*): Main file used to run the metrics on Python.  
-├── **`Matlab`** (*directory*): Contains Matlab scripts to run the metrics.  
-│   ├── **`Metrics`** (*directory*): Contains script for all metrics.  
-│   │   └── **`###`** (*directories*): Directory with scripts to compute metric ###.  
-│   ├── `SPEAR_metrics_main.m` (*file*): Main file used to run the metrics on Matlab.  
-├── **`Demo`** (*directory*): Contains some demo audio wav files with their associated metric values.  
-│   ├── `DemoAudio_reference.wav` (*file*): Contains clean audio signal.  
-│   ├── `DemoAudio_noise.wav` (*file*): Contains noisy audio signal.  
-│   ├── `DemoAudio_metrics.png` (*file*): Image of table with all computed metrics of DemoAudio.  
-│   └── `DemoAudio_metrics.json` (*file*): Json table with all computed metrics of DemoAudio.  
-└── `README.md` (*file*): This readme markdown file.   -->
-
-
-## Available Tools
-
-<p align="center">
-  <img src="assets/Scripts_blockDiagram.png" alt="diagram" width="500"/>
-</p>
-
-### Analysis tools
-
-The provided framework consist of three main scripts:
-- **Processing script** computes the baseline beamformer and output processed audio files.
-- **Evaluation script** computes the metrics on the processed and passthrough audio files and output a csv file with all metrics for all chunks.
-- **Plotting script** plot the results of the computed metrics csv file and save them.
-
-More details about the scripts can be found in the powerpoint presentation in _assets_.
-A master script is also provided to simply compute all three scripts on a subset of the dataset. Scripts can still be run individually if needed.
-
-### Extra tools
-
-The Matlab scripts to compute the chunk separation file is also provided as reference.
 
 ## References
 <!-- EasyCom -->

@@ -31,9 +31,9 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
         
         # Speech Metric setup
         window = x_ref.shape[0] / fs # sec, whole segment (for speechmetrics)
-        spmetrics = sm.load('relative',window)
         SM_scores = []
         try:
+            spmetrics = sm.load('relative',window)
             SM_scores.append(spmetrics(x_proc[:,0], x_ref[:,0], rate=fs)) # Left
             print('compute_metrics: Left done')        
             SM_scores.append(spmetrics(x_proc[:,1], x_ref[:,1], rate=fs)) # Right
@@ -52,6 +52,7 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
         print(f'{m}')
         try:
             if m=='MBSTOI': # stereo-based metric (get it once)
+                mm = m
                 score = mbstoi.mbstoi(x_ref[:,0], x_ref[:,1], x_proc[:,0], x_proc[:,1], fs)
             else: # mono-based metrics (get it for each channel)
                 xx = m.split(' (')  # format: 'metric (channel)'
@@ -97,7 +98,7 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
 
 
 def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
-                   metrics=None):
+                   list_cases=[], metrics=None):
                               
 
     # use location in file hierarchy to determine whether it's Train/Dev/Eval
@@ -126,6 +127,14 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
 
     # defines the time periods for each file where it is valid to compute metrics
     segments = pd.read_csv(segments_file)
+    if len(list_cases)>0:
+        segments = segments[segments['dataset']==list_cases[0]]
+        if len(list_cases)>1:
+            segments = segments[segments['session']==list_cases[1]]
+            if len(list_cases)>2:
+                segments = segments[segments['minute']==int(list_cases[2])]
+
+    
 
     # choice of metrics to run
     available_metrics = ['MBSTOI','STOI','ESTOI',
@@ -183,7 +192,7 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
             ref_file = Path(ref_root, f'Dataset_{dataset}', 'Reference_Audio',
                             f'Session_{session}', f'{minute_name}', ref_file_name)
             if not ref_file.is_file():
-                print(f'Expected reference file at {ref_path} is missing. Attempt to save before aborting...')
+                print(f'Expected reference file at {ref_file} is missing. Attempt to save before aborting...')
                 ended_early = True
                 break
         
@@ -225,11 +234,23 @@ if __name__ == '__main__':
                         help="csv file containg list of chunks where metrics are valid")
     parser.add_argument("save_path",
                         help="csv file where results should be stored")
+    parser.add_argument("-l", "--list_cases",
+                        help="list cases",
+                        nargs="+", type=str,
+                        default=[])
     parser.add_argument("-m","--metrics",
                         help="list a subset of metrics to compute (default is to compute them all)",
                         default=None, nargs='+')                   
     args = parser.parse_args()
     print(args)
+
+    list_cases = args.list_cases
+    if len(list_cases) > 1:
+        list_cases[1] = int(list_cases[1])
+    if len(list_cases) > 3:
+        raise ValueError('list cases must have a maximum of 3 items')
+    
+    metrics = args.metrics[0].split()
         
     spear_evaluate(args.input_root, args.proc_dir, args.segments_file, args.save_path,
-                       metrics=args.metrics)  
+                       list_cases=list_cases, metrics=metrics)  

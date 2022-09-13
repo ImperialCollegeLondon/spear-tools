@@ -46,7 +46,7 @@ def spear_enhance(input_root, output_dir, list_cases=[], method_name='baseline')
         this_case = cases.loc[n]
         dataset = this_case['dataset']
         session = this_case['session']
-        file = 'D%d_S%d_%s' % (dataset,session,this_case['file'])
+        file = 'D%d_S%d_M%s' % (dataset,session,this_case['file'])
         print('\n--+ %d/%d (%%%2.2f) %s +--' % (n+1,nCase,100*n/nCase,file))
         
         sp.set_file(dataset,session,file)

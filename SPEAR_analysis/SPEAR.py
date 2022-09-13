@@ -258,7 +258,7 @@ class SPEAR_Data:
                     files_paths = glob.glob(os.path.join(path,f'Session_{s}','*.wav'))
                     files_paths.sort()
                     for file in files_paths:
-                        files.append('M'+file.split(os.sep)[-1].split('_M')[-1].split('.wav')[0])
+                        files.append(file.split(os.sep)[-1].split('_M')[-1].split('.wav')[0])
                 for f in files:
                     c['dataset'].append(d)
                     c['session'].append(s)
