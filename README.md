@@ -38,10 +38,12 @@ conda activate <your-env-name>
 
 ## How to Use
 
-To run an example, the script to use is __run_example.sh__.
+To run an example, the script to use is __run_example.sh__ in the analysis folder.
 The following parameters can be modified
 
 ```bash
+cd analysis
+
 # Setup soft links to make paths easier
 ln -sf <outputs-folder-full-path> my_results  # Output path for the processed audio, metrics csv and plots
 ln -sf <dataset-folder-full-path> spear_data  # Root folder of the SPEAR datasets containing the folders Main and Extra
@@ -49,9 +51,9 @@ ln -sf <dataset-folder-full-path> spear_data  # Root folder of the SPEAR dataset
 # Define variables
 SET='Dev'               # 'Train', 'Dev' or 'Eval'.
 DATASET=2               # 1 to 4.
-SESSION=''              # 1 to 9 for Train, 10 to 12 for Dev, 13 to 15 for Eval. Select '' for all session of current Dev.
-MINUTE=''               # 00 to 30 (depends on the current session). '' for all minutes of current session.
-METRICS=''              # Choose to compute a subset of metrics (ex:'SDR ISR'). By default '' to run all.
+SESSION='10'            # 1 to 9 for Train, 10 to 12 for Dev, 13 to 15 for Eval. Select '' for all session of current Dev.
+MINUTE='00'             # 00 to 30 (depends on the current session). '' for all minutes of current session.
+METRICS='MBSTOI SDR'    # Choose to compute a subset of metrics (ex:'SDR ISR'). By default '' to run all.
 PROCESSING='baseline'   # Name of desired processing. 'baseline' by default
 REFERENCE='passthrough' # Name of desired reference enhancement. 'passthrough' by default.
 
