@@ -14,15 +14,17 @@ This repository countains the code to compute the baseline and run the metrics u
 </p>
 
 
-The provided framework consist of three python scripts (more details are found in the powerpoint presentation in _assets_):
+The provided framework consists mainly of three python scripts (more details are found in the powerpoint presentation in _assets_):
 - **spear_enhance.py** computes the baseline enhancement (MVDR beamformer) and output processed audio files.
 - **spear_evaluate.py** computes the metrics on the processed audio files and output a csv file with all metrics for all chunks.
 - **spear_visualise.py** plot the results of the computed metrics csv file and save them.
 
-The resulting metrics csv files for _passthrough_ and _baseline_ enhancements are already generated and provided in _metrics_. To compute those files yourself, a bash script is provided. Instructions are found below.
+The resulting metrics csv files for _passthrough_ and _baseline_ enhancements are already generated and provided in _metrics_. To compute those files yourself, a bash script __run_example.sh__ is provided. Instructions are found below.
 
 
 ## Installation
+
+We assume that the conda is installed. If not follow the instruction [here](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 ```bash
 # First clone the repo
@@ -36,8 +38,8 @@ conda activate <your-env-name>
 
 ## How to Use
 
-The main script to use is __spear_master.sh__. 
-The following parameters should be modified
+To run an example, the script to use is __run_example.sh__.
+The following parameters can be modified
 
 ```bash
 # Setup soft links to make paths easier
