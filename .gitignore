@@ -5,7 +5,10 @@
 **/._.DS_Store
 
 # Byte-compiled / optimized / DLL files
+__pycache__
 __pycache__/
+**/__pycache__/
+**/__pycache__
 *.py[cod]
 *$py.class
 
@@ -137,3 +140,5 @@ dmypy.json
 # ln shortcuts
 SPEAR_analysis/spear_data/
 SPEAR_analysis/my_results/
+SPEAR_analysis/spear_data
+SPEAR_analysis/my_results

@@ -3,6 +3,8 @@
 # Version history/updates:
 # 2022 Jun - Sina Hafezi
 # 2022 July - Pierre Guiraud - updated into a function to be used in the batch_master script
+# 2022 Aug - Alastair Moore - update to bash control
+# 2022 Sep - Pierre Guiraud - final debugging and finishing touches
 
 import argparse
 import os

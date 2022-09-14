@@ -4,6 +4,8 @@
 # 2022 May - Sina Hafezi - initial version including all metrics: MBSTOI, STOI, ESTOI, PESQ, PESQ-NB, SegSNR, fwSegSNR, SI-SDR, SDR, ISR, SAR, HASPI
 # 2022 Jul - Pierre Guiraud - updated into a function to be used in the batch_master script
 # 2022 Jul - Sina Hafezi - making the paths concatenation robust to operating sys using os.path
+# 2022 Aug - Alastair Moore - update to bash control
+# 2022 Sep - Pierre Guiraud - final debugging and finishing touches
 
 import argparse
 import os
@@ -98,7 +100,7 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
 
 
 def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
-                   list_cases=[], metrics=None):
+                   list_cases=[], metrics=''):
                               
 
     # use location in file hierarchy to determine whether it's Train/Dev/Eval
@@ -142,7 +144,7 @@ def spear_evaluate(spear_root, proc_dir, segments_file, save_path,
                          'SegSNR','fwSegSNR',
                          'SI-SDR','SDR','ISR','SAR','HASPI']
 
-    if metrics is None:
+    if len(metrics)==0:
         metrics = available_metrics
     else:
         if any(item not in available_metrics for item in metrics):
@@ -240,7 +242,7 @@ if __name__ == '__main__':
                         default=[])
     parser.add_argument("-m","--metrics",
                         help="list a subset of metrics to compute (default is to compute them all)",
-                        default=None, nargs='+')                   
+                        default='', nargs='+')                   
     args = parser.parse_args()
     print(args)
 
@@ -250,7 +252,9 @@ if __name__ == '__main__':
     if len(list_cases) > 3:
         raise ValueError('list cases must have a maximum of 3 items')
     
-    metrics = args.metrics[0].split()
+    metrics = args.metrics[0]
+    if len(metrics)>0:
+        metrics = metrics.split()
         
     spear_evaluate(args.input_root, args.proc_dir, args.segments_file, args.save_path,
                        list_cases=list_cases, metrics=metrics)  

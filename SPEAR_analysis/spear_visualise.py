@@ -5,6 +5,8 @@
 # 2022 Jul - Pierre Guiraud - updated into a function to be used in the batch_master script
 # 2022 Jul - Sina Hafezi - nan removal bug fix 
 # 2022 Jul - Sina Hafezi - making the paths concatenation robust to operating sys using os.path
+# 2022 Aug - Alastair Moore - update to bash control
+# 2022 Sep - Pierre Guiraud - final debugging and finishing touches
 
 import argparse
 import os
@@ -16,9 +18,7 @@ from pathlib import Path
 from pathlib import PurePath
 
 
-
-
-def spear_visualise(output_dir, metrics_pass, metrics_proc, method_name='baseline'):
+def spear_visualise(output_dir, metrics_ref, metrics_proc, reference_name='passthrough', method_name='baseline'):
 
     # ensure the output directory is present before we start running anything
     # - to allow running supplementary results files which already exist will not
@@ -29,7 +29,7 @@ def spear_visualise(output_dir, metrics_pass, metrics_proc, method_name='baselin
     matplotlib.rcParams.update({'font.size': 18})
 
     # Read in chunks info
-    seg_pass = pd.read_csv(metrics_pass)
+    seg_pass = pd.read_csv(metrics_ref)
     seg_pass = seg_pass.drop(['global_index', 'file_name', 'chunk_index'], axis=1)
 
     seg_proc = pd.read_csv(metrics_proc)
@@ -74,14 +74,14 @@ def spear_visualise(output_dir, metrics_pass, metrics_proc, method_name='baselin
 
                 
                 
-                # Absolute score (Processed & Passthrough)
+                # Absolute score (Processed & Reference)
                 ax = axs[0]
                 ax.boxplot(np.array([s_pass[:,0],s_pass[:,1],s_proc[:,0],s_proc[:,1]]).T,positions = [1-gg,1+gg,3-gg,3+gg])
                 ax.set_xticks([1,3])
-                ax.xaxis.set_ticklabels(['Passthrough',method_name])
+                ax.xaxis.set_ticklabels([reference_name,method_name])
                 ax.yaxis.grid(True)
                 ax.set_ylabel('%s'%(metric_name))
-                # Relative score (Processed - Passthrough)
+                # Relative score (Processed - Reference)
                 ax = axs[1]
                 ax.boxplot(s_proc-s_pass,positions = [1-gg,1+gg])
                 ax.yaxis.grid(True)
@@ -89,7 +89,7 @@ def spear_visualise(output_dir, metrics_pass, metrics_proc, method_name='baselin
                 ax.set_xticks([1])
                 ax.xaxis.set_ticklabels([method_name])
                 z_line = ax.plot(ax.get_xlim(),np.zeros((2,)),'--k')
-                z_line[0].set_label('Pass.')
+                z_line[0].set_label('Ref.')
                 ax.legend()
             else:
                 # binaural metric (e.g. MBSTOI)
@@ -101,20 +101,20 @@ def spear_visualise(output_dir, metrics_pass, metrics_proc, method_name='baselin
                 s_pass = np.delete(s_pass,nan_ids)
                 s_proc = np.delete(s_proc,nan_ids)
                 
-                # Absolute score (Processed & Passthrough)
+                # Absolute score (Processed & Reference)
                 ax = axs[0]
                 ax.boxplot(np.array([s_pass,s_proc]).T)
                 ax.yaxis.grid(True)
                 ax.set_ylabel('%s'%(metric_name))
-                ax.xaxis.set_ticklabels(['Passthrough',method_name])
-                # Relative score (Processed - Passthrough)
+                ax.xaxis.set_ticklabels([reference_name,method_name])
+                # Relative score (Processed - Reference)
                 ax = axs[1]
                 ax.boxplot(s_proc-s_pass)
                 ax.yaxis.grid(True)
                 ax.set_ylabel('\u0394%s'%(metric_name))
                 ax.xaxis.set_ticklabels([method_name])
                 z_line = ax.plot(ax.get_xlim(),np.zeros((2,)),'--k')
-                z_line[0].set_label('Pass.')
+                z_line[0].set_label('Ref.')
                 ax.legend()
             
             fig.tight_layout()
@@ -130,16 +130,19 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("output_root",
                         help="Directory below which to save metrics plots")                    
-    parser.add_argument("metrics_pass",
-                        help="Metrics file (.csv) for the passthrough method")
+    parser.add_argument("metrics_ref",
+                        help="Metrics file (.csv) for the reference method")
     parser.add_argument("metrics_proc",
                         help="Metrics file (.csv) for the current method")
+    parser.add_argument("-r","--reference_name",
+                        help="reference algorithm used: [passthrough] by default",
+                        default='passthrough')  
     parser.add_argument("-m","--method_name",
                         help="enhancement algorithm used: [baseline] by default",
                         default='baseline')                   
     args = parser.parse_args()
     print(args)
 
-    spear_visualise(args.output_root, args.metrics_pass, args.metrics_proc, method_name=args.method_name)
+    spear_visualise(args.output_root, args.metrics_ref, args.metrics_proc, reference_name=args.reference_name, method_name=args.method_name)
 
         

@@ -45,20 +45,23 @@ ln -sf <outputs-folder-full-path> my_results  # Output path for the processed au
 ln -sf <dataset-folder-full-path> spear_data  # Root folder of the SPEAR datasets containing the folders Main and Extra
 
 # Define variables
-SET='Dev'           # 'Train', 'Dev' or 'Eval'.
-DATASET=2           # 1 to 4.
-SESSION=''          # 1 to 9 for Train, 10 to 12 for Dev, 13 to 15 for Eval. Select '' for all session of current Dev.
-MINUTE=''           # 00 to 30 (depends on the current session). '' for all minutes of current session.
-METRICS=''          # Choose to compute a subset of metrics (ex:'SDR ISR'). By default '' to run all.
-METHOD='baseline'   # Name of desired processing. Either 'passthrough' or 'baseline' (default).
+SET='Dev'               # 'Train', 'Dev' or 'Eval'.
+DATASET=2               # 1 to 4.
+SESSION=''              # 1 to 9 for Train, 10 to 12 for Dev, 13 to 15 for Eval. Select '' for all session of current Dev.
+MINUTE=''               # 00 to 30 (depends on the current session). '' for all minutes of current session.
+METRICS=''              # Choose to compute a subset of metrics (ex:'SDR ISR'). By default '' to run all.
+PROCESSING='baseline'   # Name of desired processing. 'baseline' by default
+REFERENCE='passthrough' # Name of desired reference enhancement. 'passthrough' by default.
+
 ```
 
 The rest of the script computes the enhancement, metrics evaluation and plotting for both _passthrough_ and the desired METHOD. 
 
 ```bash
-python spear_enhance.py <input_root> <output_root> -m <method-name> -l <list-cases>
-python spear_evaluate.py <input_root> <proc_dir> <segments_file> <save_path> -l <list_cases> -m <metrics>
-python spear_visualise.py <output_root> <metrics-pass> <metrics-proc> -m <method-name>
+python spear_enhance.py   <input-root> <audio-dir> --method_name <method-name> --list_cases <list-cases>
+python spear_evaluate.py  <input-root> <audio-dir> <segments-csv> <metrics-csv> --list_cases <list-cases> --metrics <metrics>
+python spear_visualise.py <output-root> <metrics-csv-ref> <metrics-proc> --reference_name <reference-name> --method_name <method-name>
+
 ```
 
 ## List of metrics
