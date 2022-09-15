@@ -6,6 +6,7 @@ dependencies:
    - pandas
    - pip
    - scipy
+   - ffmpeg
    - pip:
       - h5py
       - librosa

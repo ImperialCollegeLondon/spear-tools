@@ -5,7 +5,10 @@
 **/._.DS_Store
 
 # Byte-compiled / optimized / DLL files
+__pycache__
 __pycache__/
+**/__pycache__/
+**/__pycache__
 *.py[cod]
 *$py.class
 
@@ -133,3 +136,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# ln shortcuts
+analysis/spear_data/
+analysis/my_results/
+analysis/spear_data
+analysis/my_results
+analysis/Legacy
+analysis/Legacy/
