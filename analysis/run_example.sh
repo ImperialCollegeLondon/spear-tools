@@ -9,7 +9,7 @@ SET='Dev'
 DATASET=2
 SESSION='10'
 MINUTE='00'
-METRICS='SDR ISR'
+METRICS=''
 PROCESSING='baseline'
 REFERENCE='passthrough'
 
@@ -20,11 +20,6 @@ audio_dir_ref="my_results/audio_${REFERENCE}_$(date '+%Y%m%d')"
 audio_dir_proc="my_results/audio_${PROCESSING}_$(date '+%Y%m%d')"
 metrics_dir="my_results/metrics"
 plots_dir="my_results/plots/${PROCESSING}_${SET}_D${DATASET}_S${SESSION}_M${MINUTE}"
-
-mkdir $audio_dir_ref
-mkdir $audio_dir_proc
-mkdir $metrics_dir
-mkdir -p $plots_dir
 
 
 # Input paths relative to spear_data should not be changed
