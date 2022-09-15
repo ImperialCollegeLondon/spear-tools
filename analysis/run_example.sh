@@ -1,6 +1,7 @@
-# Setup soft links to make paths easier
-ln -sf <outputs-folder-full-path> my_results  
-ln -sf <dataset-folder-full-path> spear_data  
+# Uncomment and edit the following lines to create symbolic links so you can choose
+# where to keep your data
+# ln -s <dataset-folder-full-path> spear_data  
+# ln -s <outputs-folder-full-path> my_results  
 
 
 # Define variables
@@ -13,19 +14,28 @@ PROCESSING='baseline'
 REFERENCE='passthrough'
 
 
-# Paths
-input_root_ref="spear_data/Main/$SET"
-input_root_proc="spear_data/Main/$SET"
-
+# Output paths
+# These can be whatever you want them to be
 audio_dir_ref="my_results/audio_${REFERENCE}_$(date '+%Y%m%d')"
 audio_dir_proc="my_results/audio_${PROCESSING}_$(date '+%Y%m%d')"
+metrics_dir="my_results/metrics"
+plots_dir="my_results/plots/${PROCESSING}_${SET}_D${DATASET}_S${SESSION}_M${MINUTE}"
 
+mkdir $audio_dir_ref
+mkdir $audio_dir_proc
+mkdir $metrics_dir
+mkdir -p $plots_dir
+
+
+# Input paths relative to spear_data should not be changed
+input_root_ref="spear_data/Main/$SET"
+input_root_proc="spear_data/Main/$SET"
 segments_csv="segments_$SET.csv"
 
-metrics_csv_ref="my_results/metrics/${REFERENCE}_${SET}_D${DATASET}_S${SESSION}_M${MINUTE}.csv"
-metrics_csv_proc="my_results/metrics/${PROCESSING}_${SET}_D${DATASET}_S${SESSION}_M${MINUTE}.csv"
+# Derived paths
+metrics_csv_ref="${metrics_dir}/${REFERENCE}_${SET}_D${DATASET}_S${SESSION}_M${MINUTE}.csv"
+metrics_csv_proc="${metrics_dir}/${PROCESSING}_${SET}_D${DATASET}_S${SESSION}_M${MINUTE}.csv"
 
-plots_dir="my_results/metrics/${PROCESSING}_${SET}_D${DATASET}_S${SESSION}_M${MINUTE}"
 
 
 # Run passtrough and enhance
