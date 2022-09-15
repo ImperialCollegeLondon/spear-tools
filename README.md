@@ -52,7 +52,6 @@ SET='Dev'               # 'Train', 'Dev' or 'Eval'.
 DATASET=2               # 1 to 4.
 SESSION='10'            # 1 to 9 for Train, 10 to 12 for Dev, 13 to 15 for Eval. Select '' for all session of current Dev.
 MINUTE='00'             # 00 to 30 (depends on the current session). '' for all minutes of current session.
-METRICS='MBSTOI SDR'    # Choose to compute a subset of metrics (ex:'SDR ISR'). By default '' to run all.
 PROCESSING='baseline'   # Name of desired processing. 'baseline' by default
 REFERENCE='passthrough' # Name of desired reference enhancement. 'passthrough' by default.
 
@@ -62,7 +61,7 @@ The rest of the script computes the enhancement, metrics evaluation and plotting
 
 ```bash
 python spear_enhance.py   <input-root> <audio-dir> --method_name <method-name> --list_cases <list-cases>
-python spear_evaluate.py  <input-root> <audio-dir> <segments-csv> <metrics-csv> --list_cases <list-cases> --metrics <metrics>
+python spear_evaluate.py  <input-root> <audio-dir> <segments-csv> <metrics-csv> --list_cases <list-cases>
 python spear_visualise.py <output-root> <metrics-csv-ref> <metrics-proc> --reference_name <reference-name> --method_name <method-name>
 
 ```

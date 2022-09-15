@@ -138,7 +138,7 @@ dmypy.json
 .pyre/
 
 # ln shortcuts
-SPEAR_analysis/spear_data/
-SPEAR_analysis/my_results/
-SPEAR_analysis/spear_data
-SPEAR_analysis/my_results
+analysis/spear_data/
+analysis/my_results/
+analysis/spear_data
+analysis/my_results
