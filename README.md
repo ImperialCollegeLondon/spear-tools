@@ -24,7 +24,7 @@ The resulting metrics csv files for _passthrough_ and _baseline_ enhancements ar
 
 ## Installation
 
-We assume that the conda is installed. If not follow the instruction [here](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
+We assume that conda is installed. If not follow the instruction [here](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 ```bash
 # First clone the repo
