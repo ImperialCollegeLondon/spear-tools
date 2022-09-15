@@ -4,7 +4,7 @@
   <img src="assets/SPEAR_logo.png" alt="logo" width="250"/>
 </p>
 
-This repository countains the code to compute the baseline and run the metrics used in the [SPEAR challenge](https://imperialcollegelondon.github.io/spear-challenge/).
+This repository countains the code to compute the baseline and run the metrics used in the [SPEAR challenge](https://imperialcollegelondon.github.io/spear-challenge/). To download the data go [here](https://imperialcollegelondon.github.io/spear-challenge/downloads/).
 
 
 ## Analysis tools
@@ -39,7 +39,7 @@ cd analysis
 
 ## How to Use
 
-To run an example, the script to use is __run_example.sh__ in the analysis folder.
+To run an example, use the command `bash run_example.sh` in the analysis folder.
 The following parameters can be modified
 
 ```bash
