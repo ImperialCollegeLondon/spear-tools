@@ -34,6 +34,7 @@ cd spear-tools
 # Second create & activate environment with conda
 conda env create -n <your-env-name> -f env-spear-metrics.yml
 conda activate <your-env-name>
+cd analysis
 ```
 
 ## How to Use
@@ -42,8 +43,6 @@ To run an example, the script to use is __run_example.sh__ in the analysis folde
 The following parameters can be modified
 
 ```bash
-cd analysis
-
 # Setup soft links to make paths easier
 ln -sf <outputs-folder-full-path> my_results  # Output path for the processed audio, metrics csv and plots
 ln -sf <dataset-folder-full-path> spear_data  # Root folder of the SPEAR datasets containing the folders Main and Extra

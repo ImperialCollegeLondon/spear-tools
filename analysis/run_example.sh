@@ -7,13 +7,13 @@ ln -sf <dataset-folder-full-path> spear_data
 SET='Dev'
 DATASET=2
 SESSION='10'
-MINUTE=''
+MINUTE='00'
 METRICS='SDR ISR'
 PROCESSING='baseline'
 REFERENCE='passthrough'
 
 
-# Path
+# Paths
 input_root_ref="spear_data/Main/$SET"
 input_root_proc="spear_data/Main/$SET"
 
