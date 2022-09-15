@@ -2,12 +2,11 @@
 # where to keep your data
 # ln -s <dataset-folder-full-path> spear_data  
 # ln -s <outputs-folder-full-path> my_results  
-ln -sf /Users/pguiraud/Documents/SPEAR_0912/Analysis my_results
-ln -sf /Users/pguiraud/Documents/SPEAR_0912 spear_data
+
 
 # Define variables
 SET='Dev'
-DATASET=4
+DATASET=2
 SESSION='10'
 MINUTE='00'
 PROCESSING='baseline'
