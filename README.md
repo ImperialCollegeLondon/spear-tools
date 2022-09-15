@@ -36,6 +36,7 @@ conda env create -n <your-env-name> -f env-spear-metrics.yml
 conda activate <your-env-name>
 cd analysis
 ```
+For windows users, Microsoft C++ build tools are needed when building the environment. 
 
 ## How to Use
 
