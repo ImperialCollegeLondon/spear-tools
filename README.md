@@ -6,6 +6,25 @@
 
 This repository countains the code to compute the baseline and run the metrics used in the [SPEAR challenge](https://imperialcollegelondon.github.io/spear-challenge/). To download the data go [here](https://imperialcollegelondon.github.io/spear-challenge/downloads/).
 
+Terminal commands to download are also provided below. Use the flag [--continue-at](https://curl.se/docs/manpage.html#-C) if the download aborted to early.
+```bash
+cd <your-spear-directory>
+
+# All core Train data. Size of 14, 20, 20 an 24GB compressed for D1, D2, D3 and D4 respectively.
+curl https://spear2022data.blob.core.windows.net/spear-data/CoreTrainDataset1_v1.1.tar -o CoreTrainDataset1_v1.1.tar
+curl https://spear2022data.blob.core.windows.net/spear-data/CoreTrainDataset2_v1.1.tar -o CoreTrainDataset2_v1.1.tar
+curl https://spear2022data.blob.core.windows.net/spear-data/CoreTrainDataset3_v1.1.tar -o CoreTrainDataset3_v1.1.tar
+curl https://spear2022data.blob.core.windows.net/spear-data/CoreTrainDataset4_v1.1.tar -o CoreTrainDataset4_v1.1.tar
+
+# ATFs
+curl https://spear2022data.blob.core.windows.net/spear-data/Device_ATFs.h5 --create-dirs -o Miscellaneous/Array_Transfer_Functions/Device_ATFs.h5
+
+# All core Dev data (size of 24GB unpacked, 35GB decompressed)
+curl https://spear2022data.blob.core.windows.net/spear-data/CoreDev_1.1.tar -o CoreDev_v1.1.tar
+```
+
+Note that the ATFs should be downloaded in a directory called Miscellaneous/Array_Transfer_Functions at the same level as the extracted Main and Extra folders for the example bash script to run. The file is already included in CoreDev but not in the CoreTrain files.
+
 
 ## Analysis tools
 
