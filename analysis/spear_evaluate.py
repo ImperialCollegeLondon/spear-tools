@@ -87,6 +87,7 @@ def compute_metrics(x_proc, x_ref, fs_ref, cols):
                 elif mm=='fwSegSNR':
                     score = pysepm.fwSNRseg(x_ref[:,cc], x_proc[:,cc], fs)   
                 elif mm=='HASPI':
+                    np.random.seed(33)
                     score, _ = haspi.haspi_v2(x_ref[:,cc], fs, x_proc[:,cc], fs, [0,0,0,0,0,0])
                 else:
                     raise ValueError(f'Unknown metric: {mm}')
